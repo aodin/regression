@@ -212,3 +212,27 @@ func (r *Regression) Dump(data bool) {
 	fmt.Println("R2 = ", r.Rsquared)
 	fmt.Println("-----------------------------------------------------------------\n")
 }
+
+type Result struct {
+	N                 int
+	VarianceObserved  float64
+	VariancePredicted float64
+	Rsquared          float64
+	Data              []DataPoint
+}
+
+// TODO Cache the result
+func (r *Regression) Result() (result Result, err error) {
+	if !r.Initialised {
+		err = fmt.Errorf("regression: observations are needed before results can be created")
+		return
+	}
+	r.calcPredicted()
+
+	result.Data = r.Data
+	result.N = len(r.Data)
+	result.VarianceObserved = r.VarianceObserved
+	result.VariancePredicted = r.VariancePredicted
+	result.Rsquared = r.Rsquared
+	return
+}
